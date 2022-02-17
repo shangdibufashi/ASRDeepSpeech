@@ -4,11 +4,14 @@ import subprocess
 from tempfile import NamedTemporaryFile
 import numpy as np
 from scipy.io.wavfile import read
+import resampy
 
 
 def load_audio(path, fq=16000):
     sample_rate, sound = read(path)
-    assert sample_rate==fq
+    if  sample_rate != fq:
+      sound = resampy.resample(sound, sample_rate, fq, axis=-1)
+    # assert sample_rate==fq
     sound = sound.astype('float32') / 32767
     if len(sound.shape) > 1:
         if sound.shape[1] == 1:
